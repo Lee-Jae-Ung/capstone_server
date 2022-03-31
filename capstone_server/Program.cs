@@ -4,8 +4,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
+using System.Management;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,13 +23,21 @@ namespace capstone_server
         {
 
 
-            SerialOpen();
+            //SerialOpen();
+            //Thread serial;
+            Thread svstart;
 
-            Thread serial = new Thread(() => Read());
-            Thread svstart = new Thread(() => CreateHostBuilder(args).Build().Run());
+            // serial = new Thread(() => Read());
+            //serial.Start();
 
-            serial.Start();
+
+
+            svstart = new Thread(() => CreateHostBuilder(args).Build().Run());
             svstart.Start();
+
+
+
+
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -39,11 +49,23 @@ namespace capstone_server
                 });
 
 
+        public static void SerialSearch()
+        {
+            string[] PortNames = SerialPort.GetPortNames();
+
+            foreach (string portnumber in PortNames)
+            {
+                Console.WriteLine(portnumber);
+            }
+        }
+
         public static void SerialOpen()
         {
             _serialPort = new SerialPort();
 
-            _serialPort.PortName = "COM5";
+            Console.Write("input port : ");
+
+            _serialPort.PortName = Console.ReadLine();
             _serialPort.BaudRate = 115200;
             _serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), "None");
             _serialPort.DataBits = 8;
@@ -53,47 +75,88 @@ namespace capstone_server
             _serialPort.ReadTimeout = 500;
             _serialPort.WriteTimeout = 500;
 
-            _serialPort.Open();
+            try
+            {
+                _serialPort.Open();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("포트의 연결상태를 확인하십시오");
+
+            }
         }
 
         public static void Read()
         {
-
             int seq = 0;
 
-            //Thread.Sleep(1000);
             while (true)
             {
-                //Thread.Sleep(1000);
-
                 try
                 {
-                    //Console.WriteLine("반복문 시작");
 
-                    string message = _serialPort.ReadLine();
-                    //Console.WriteLine(message);
-                    //Console.WriteLine(double.Parse(message));
-
+                    string message;
                     while (seq < buffsize)
                     {
-                        //Console.WriteLine("while 2번째");
-
+                        message = _serialPort.ReadLine();
                         ts[seq] = double.Parse(message);
                         seq++;
                     }
-
                     seq = 0;
-
-                    //Console.WriteLine(ts);
-
                 }
+                catch (TimeoutException) { }
+            }
 
-                catch (TimeoutException)
-                {
-                }
+        }
 
+        
+    }
+    public class Manager
+    {
+        public static double t;
+        public static string GetInfo()
+        {
+
+            PerformanceCounter cpuCounter = new PerformanceCounter();
+            cpuCounter.CategoryName = "Processor";
+            cpuCounter.CounterName = "% Processor Time";
+            cpuCounter.InstanceName = "_Total";
+
+            // will always start at 0
+            dynamic firstValue = cpuCounter.NextValue();
+            Thread.Sleep(1000);
+            // now matches task manager reading
+            dynamic cpuUsage = cpuCounter.NextValue();
+
+            //Console.WriteLine(secondValue);
+
+            ManagementClass cls = new("Win32_OperatingSystem");
+            ManagementObjectCollection instances = cls.GetInstances();
+
+            double total_physical_memeory = 0;
+            double free_physical_memeory = 0;
+            double used_physical_memory = 0;
+
+
+            foreach (ManagementObject info in instances)
+            {
+                total_physical_memeory = Math.Round(double.Parse(info["TotalVisibleMemorySize"].ToString()) / 1024, 1);
+                free_physical_memeory = Math.Round(double.Parse(info["FreePhysicalMemory"].ToString()) / 1024, 1);
+                used_physical_memory = total_physical_memeory - free_physical_memeory;
 
             }
+
+            string status_info = "{'cpu'" + ":" + "'" + Math.Round(cpuUsage, 1).ToString() + " %" + "'," +
+                "'ram_total'" + ":" + "'" + total_physical_memeory.ToString() + " MB" + "'," +
+                "'ram_usage'" + ":" + "'" + Math.Round(used_physical_memory, 1).ToString() + " MB" + "'," +
+                "'ram_usage_per'" + ":" + "'" + Math.Round(used_physical_memory * 100 / total_physical_memeory, 1).ToString() + " %" + "'}";
+            return status_info;
         }
+        public static void Reset()
+        {
+            Process.Start("shutdown.exe", "-r");
+        }
+
+
     }
 }
