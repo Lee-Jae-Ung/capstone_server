@@ -106,7 +106,26 @@ namespace capstone_server.Controllers
             "\"DATE\"" + ":" + "\"" + date + "\"" + "}";
             return status_info;
         }
-        
+
+
+        [HttpGet("Test{pointid}")]
+        public string DaqTest(string pointid)
+        {
+            //특징 추가 및 시간 조정
+            DateTime now_date = DateTime.Now.AddSeconds(-10);
+            string t2 = now_date.ToString("yyyy-MM-dd HH:mm:ss");
+            feature = ManageDb.SelectDAQ_test(pointid, t2);
+
+            double rms1 = feature.RMS_1;
+            string date = feature.date;
+
+
+
+            string status_info = "{\"RMS1\"" + ":" + "\"" + rms1 + "\"," +
+            "\"DATE\"" + ":" + "\"" + date + "\"" + "}";
+            return status_info;
+        }
+
         [HttpGet("{filename}/{period}")]
         public async Task<IActionResult> GetDownloadResult(string filename,string date,string period)
         {
@@ -187,6 +206,7 @@ namespace capstone_server.Controllers
             double[] rms2 = feature1.RMS2_arr;
             double[] rms3 = feature1.RMS3_arr;
             double[] rms4 = feature1.RMS4_arr;
+            string[] date2 = feature1.date2;
             int count = feature1.count;
 
 
@@ -202,12 +222,13 @@ namespace capstone_server.Controllers
 
             using (StreamWriter file = new StreamWriter(path))
             {
-                file.WriteLine("csv,"+ feature1.date2+","+period);
-                file.WriteLine("rms1,rms2,rms3,rms4,");
+                file.WriteLine("csv,"+period+",");
+                file.WriteLine("date,rms1,rms2,rms3,rms4,");
 
                 
                 for(int i = 0; i < count; i++)
                 {
+                    file.Write("{0},", date2[i]);
                     file.Write("{0},", rms1[i]);
                     file.Write("{0},", rms2[i]);
                     file.Write("{0},", rms3[i]);

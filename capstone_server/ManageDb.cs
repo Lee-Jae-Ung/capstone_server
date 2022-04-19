@@ -186,9 +186,6 @@ namespace capstone_server
             int seq3 = 0;
             int seq4 = 0;
 
-
-
-
             using (MySqlConnection connection = new MySqlConnection("Server=localhost;Port=3306;Database=sdg;Uid=root;Pwd=offset01!"))
             {
                 SDG_F featrue_data = new SDG_F();
@@ -271,6 +268,60 @@ namespace capstone_server
             }
         }
 
+        public static SDG_F SelectDAQ_test(string point_id, string time)
+        {
+
+
+            using (MySqlConnection connection = new MySqlConnection("Server=localhost;Port=3306;Database=currentdata;Uid=root;Pwd=offset01!"))
+            {
+                SDG_F featrue_data = new SDG_F();
+
+
+                try//예외 처리 
+                {
+
+                    connection.Open();
+                    string sql = "select test_feature.signal,test_feature.acquired_at " +
+                        "from test_feature " +
+                        "where test_feature.acquired_at = " + "'" + time + "';";
+                    //Console.WriteLine(sql);
+                    //ExecuteReader를 이용하여
+                    //연결 모드로 데이타 가져오기
+                    MySqlCommand cmd = new MySqlCommand(sql, connection);
+                    MySqlDataReader table = cmd.ExecuteReader();
+
+                    while (table.Read())
+                    {
+                        //특징 추가
+                        featrue_data.RMS_1 = (double)table["signal"];
+                        featrue_data.date = string.Format("{0:yyyy-MM-dd HH:mm:ss}", Convert.ToDateTime(((DateTime)table["acquired_at"]).ToString()));
+
+                    }
+
+
+
+                    //Console.WriteLine("{0} {1}", table["No"], table["sig1"]);
+                    table.Close();
+
+
+
+
+                    return featrue_data;
+
+
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("실패");
+                    Console.WriteLine(ex.ToString());
+
+                    return featrue_data;
+                }
+
+            }
+        }
+
         public static SDG_F SelectSDG_day(string facility_id, string start, string end)
         {
             
@@ -290,6 +341,7 @@ namespace capstone_server
                 featrue_data.RMS2_arr = new double[420000];
                 featrue_data.RMS3_arr = new double[420000];
                 featrue_data.RMS4_arr = new double[420000];
+                featrue_data.date2 = new string[420000];
 
 
 
@@ -299,7 +351,7 @@ namespace capstone_server
                     Console.WriteLine("func exec start date : " + end);
 
                     connection.Open();
-                    string sql = "select fac.id,f.point_id, f.feature_type_id, ft.name, ft.sensor_type, f.value, f.acquired_at " +
+                    string sql = "select fac.id,f.point_id, ft.name, ft.sensor_type, f.value, f.acquired_at " +
                         "from features as f,feature_types as ft,facilities as fac, points as p " +
                         "where f.point_id = p.id " +
                         "and p.facility_id = fac.id " +
@@ -313,13 +365,14 @@ namespace capstone_server
                     MySqlCommand cmd = new MySqlCommand(sql, connection);
                     MySqlDataReader table = cmd.ExecuteReader();
 
+
                     while (table.Read())
                     {
 
                         if ((UInt64)table["point_id"] % 4 == 1)
                         {
                             (featrue_data.RMS1_arr)[seq1] = (double)table["value"];
-                            seq1++;
+                            (featrue_data.date2)[seq1] = string.Format("{0:yyyy-MM-dd HH:mm:ss}", Convert.ToDateTime(((DateTime)table["acquired_at"]).ToString())); seq1++;
                         }
                         else if ((UInt64)table["point_id"] % 4 == 2)
                         {
@@ -339,7 +392,7 @@ namespace capstone_server
                             seq4++;
 
                         }
-                        featrue_data.date2 = string.Format("{0:yyyy-MM-dd HH:mm:ss}", Convert.ToDateTime(((DateTime)table["acquired_at"]).ToString()));
+                        //featrue_data.date2 = string.Format("{0:yyyy-MM-dd HH:mm:ss}", Convert.ToDateTime(((DateTime)table["acquired_at"]).ToString()));
 
 
 

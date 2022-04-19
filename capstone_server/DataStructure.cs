@@ -48,7 +48,7 @@ namespace capstone_server
             public double[] RMS2_arr;
             public double[] RMS3_arr;
             public double[] RMS4_arr;
-            public string date2;
+            public string[] date2;
             public int count;
 
 
