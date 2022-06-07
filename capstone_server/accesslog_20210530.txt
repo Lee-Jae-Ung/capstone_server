@@ -1,0 +1,72 @@
+access_time  :  2021-05-30 16:41:34
+facility id  :  2
+request period  :  day
+start date  :  2021-05-29 16:41:34
+end date  :  2021-05-30 16:41:34
+FILE PATH  :  C:\Users\UOU\source\repos\capstone_server\capstone_server\SDG2.csv
+ROW COUNT  :  0
+-----------------------------
+access_time  :  2021-05-30 16:41:46
+facility id  :  3
+request period  :  week
+start date  :  2021-05-23 16:41:46
+end date  :  2021-05-30 16:41:46
+FILE PATH  :  C:\Users\UOU\source\repos\capstone_server\capstone_server\SDG3.csv
+ROW COUNT  :  1166
+-----------------------------
+access_time  :  2021-05-30 16:43:23
+facility id  :  3
+request period  :  month
+start date  :  2021-04-30 16:43:23
+end date  :  2021-05-30 16:43:23
+FILE PATH  :  C:\Users\UOU\source\repos\capstone_server\capstone_server\SDG3.csv
+ROW COUNT  :  7777
+-----------------------------
+access_time  :  2021-05-30 16:44:10
+facility id  :  3
+request period  :  week
+start date  :  2021-05-23 16:44:10
+end date  :  2021-05-30 16:44:10
+FILE PATH  :  C:\Users\UOU\source\repos\capstone_server\capstone_server\SDG3.csv
+ROW COUNT  :  1166
+-----------------------------
+access_time  :  2021-05-30 16:45:25
+facility id  :  3
+request period  :  month
+start date  :  2021-04-30 16:45:25
+end date  :  2021-05-30 16:45:25
+FILE PATH  :  C:\Users\UOU\source\repos\capstone_server\capstone_server\SDG3.csv
+ROW COUNT  :  7776
+-----------------------------
+access_time  :  2021-05-30 16:58:33
+facility id  :  3
+request period  :  week
+start date  :  2021-05-23 16:58:33
+end date  :  2021-05-30 16:58:33
+FILE PATH  :  C:\Users\UOU\source\repos\capstone_server\capstone_server\SDG3.csv
+ROW COUNT  :  1163
+-----------------------------
+access_time  :  2021-05-30 17:30:48
+facility id  :  
+request period  :  info
+start date  :  
+end date  :  2021-05-30 17:30:48
+FILE PATH  :  C:\Users\UOU\source\repos\capstone_server\capstone_server\Pc
+ROW COUNT  :  0
+-----------------------------
+access_time  :  2021-05-30 17:30:51
+facility id  :  
+request period  :  info
+start date  :  
+end date  :  2021-05-30 17:30:51
+FILE PATH  :  C:\Users\UOU\source\repos\capstone_server\capstone_server\Pc
+ROW COUNT  :  0
+-----------------------------
+access_time  :  2021-05-30 19:53:23
+facility id  :  3
+request period  :  week
+start date  :  2021-05-23 19:53:23
+end date  :  2021-05-30 19:53:23
+FILE PATH  :  C:\Users\UOU\source\repos\capstone_server\capstone_server\SDG3.csv
+ROW COUNT  :  1128
+-----------------------------

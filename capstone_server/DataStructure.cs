@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace capstone_server
 {
+    //데이터 구조체 정의
     public class DataStructure
     {
         /*
@@ -36,20 +37,29 @@ namespace capstone_server
 
         };
         */
+        //수소 설비 데이터를 위한 구조체 정의
         public struct SDG_F
         {
-            public double RMS_1;
-            public double RMS_2;
-            public double RMS_3;
-            public double RMS_4;
-            public string date;
-
+            // 하나의 데이터가 아닌 각 기간별 데이터를 모두 담아야 하기 때문에 배열로 선언
             public double[] RMS1_arr;
             public double[] RMS2_arr;
             public double[] RMS3_arr;
             public double[] RMS4_arr;
             public string[] date2;
+
+            //데이터의 행 개수를 파악하기 위해 count 변수 선언
             public int count;
+
+        }
+        
+        //직접 만든 DAQ의 데이터를 위한 구조체 정의
+        public struct DAQ_F
+        {
+            // 실시간으로 하나의 값을 전달하면 되기 떄문에 일반 double형 변수로 선언
+            public double rms;
+
+            //현재 날짜를 전달하기 위한 date 변수 선언
+            public string date;
 
 
         }

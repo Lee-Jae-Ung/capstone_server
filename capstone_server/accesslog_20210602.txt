@@ -1,0 +1,24 @@
+access_time  :  2021-06-02 10:49:24
+facility id  :  3
+request period  :  week
+start date  :  2021-05-26 10:49:24
+end date  :  2021-06-02 10:49:24
+FILE PATH  :  C:\Users\UOU\source\repos\capstone_server\capstone_server\SDG3.csv
+ROW COUNT  :  597
+-----------------------------
+access_time  :  2021-06-02 10:49:25
+facility id  :  3
+request period  :  day
+start date  :  2021-06-01 10:49:25
+end date  :  2021-06-02 10:49:25
+FILE PATH  :  C:\Users\UOU\source\repos\capstone_server\capstone_server\SDG3.csv
+ROW COUNT  :  224
+-----------------------------
+access_time  :  2021-06-02 10:49:27
+facility id  :  3
+request period  :  week
+start date  :  2021-05-26 10:49:27
+end date  :  2021-06-02 10:49:27
+FILE PATH  :  C:\Users\UOU\source\repos\capstone_server\capstone_server\SDG3.csv
+ROW COUNT  :  597
+-----------------------------

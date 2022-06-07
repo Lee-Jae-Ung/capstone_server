@@ -17,70 +17,25 @@ namespace capstone_server
 {
     public class Program
     {
-        public static int buffsize = 51200;
         static SerialPort _serialPort;
-        public static double[] ts = new double[buffsize];
-
-        static int count123 = 0;
-
-
-        //public static DateTime dtime = new DateTime(2021, 04, 14, 14, 00, 00);
-        //public static DateTime dtime_now = DateTime.Now.AddYears(-1);
-
-        //public static string t = "";
-        //public static string t2 = "";
-
+        public static string daq_data = null;
+        static bool status = true;
 
         public static void Main(string[] args)
         {
 
-            //Console.WriteLine(dtime_now);
-
-            //Thread timer;
-            /*
-            timer = new Thread(() => Timer12());
-            timer.Start();
-
-            serial = new Thread(() => ReadTest());
-            serial.Start();
-            */
-
-            //dtime = dtime.AddSeconds(1.0);
-
-
-            /*
-            Thread AE_1_1;
-            AE_1_1 = new Thread(() => runDevice("1","145", ref AEdata_1_1));
-            AE_1_1.Start();
-
-            Thread AE_1_2;
-            AE_1_2 = new Thread(() => runDevice("1", "146",ref AEdata_1_2));
-            AE_1_2.Start();
-
-            Thread VIB_1_1;
-            VIB_1_1 = new Thread(() => runDevice("1", "149",ref VIBdata_1_1));
-            VIB_1_1.Start();
-
-            Thread VIB_1_2;
-            VIB_1_2 = new Thread(() => runDevice("1", "150",ref VIBdata_1_2));
-            VIB_1_2.Start();
-            */
-            /*
+          
+            
             SerialOpen();
-            Thread serial;
-            serial = new Thread(() => Read());
-            serial.Start();
-            */
-            /*
-            Thread clock;
-            clock = new Thread(() => startclock());
-            clock.Start();
-            */
-            /*
-            Thread clock2;
-            clock2 = new Thread(() => startDayclock());
-            clock2.Start();
-            */
+            if (status)
+            {
+                Thread serial;
+                serial = new Thread(() => Read());
+                serial.Start();
+            }
+            
+            
+           
 
             Thread svstart;
             svstart = new Thread(() => CreateHostBuilder(args).Build().Run());
@@ -160,27 +115,35 @@ namespace capstone_server
         public static void SerialOpen()
         {
             _serialPort = new SerialPort();
-
-            Console.Write("input port : ");
+            Console.WriteLine("**연결된 포트가 없다면 none 을 입력하시오**");
+            Console.Write("포트를 입력하시오 : ");
 
             _serialPort.PortName = Console.ReadLine();
-            _serialPort.BaudRate = 115200;
-            _serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), "None");
-            _serialPort.DataBits = 8;
-            _serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), "1");
-
-            // Set the read/write timeouts
-            _serialPort.ReadTimeout = 500;
-            _serialPort.WriteTimeout = 500;
-
-            try
+            
+            if (_serialPort.PortName.Equals("none"))
             {
-                _serialPort.Open();
+                status = false;
+                return;
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine("포트의 연결상태를 확인하십시오");
+                _serialPort.BaudRate = 115200;
+                _serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), "None");
+                _serialPort.DataBits = 8;
+                _serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), "1");
 
+                _serialPort.ReadTimeout = 500;
+                _serialPort.WriteTimeout = 500;
+
+                try
+                {
+                    _serialPort.Open();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("포트의 연결상태를 확인하십시오");
+
+                }
             }
         }
 
@@ -194,20 +157,16 @@ namespace capstone_server
                 try
                 {
 
-                    string message;
-                    while (seq < buffsize)
-                    {
-                        message = _serialPort.ReadLine();
-                        ts[seq] = double.Parse(message);
-                        seq++;
-                    }
-                    seq = 0;
+
+                    
+                    daq_data = _serialPort.ReadLine();
+
                 }
                 catch (TimeoutException) { }
             }
 
         }
-
+        /*
         public static void ReadTest()
         {
           
@@ -242,55 +201,8 @@ namespace capstone_server
 
         }
 
-        
+        */
     }
 }
-public class Manager
-{
-    public static double t;
-    public static string GetInfo()
-    {
 
-        PerformanceCounter cpuCounter = new PerformanceCounter();
-        cpuCounter.CategoryName = "Processor";
-        cpuCounter.CounterName = "% Processor Time";
-        cpuCounter.InstanceName = "_Total";
-
-        // will always start at 0
-        dynamic firstValue = cpuCounter.NextValue();
-        Thread.Sleep(1000);
-        // now matches task manager reading
-        dynamic cpuUsage = cpuCounter.NextValue();
-
-        //Console.WriteLine(secondValue);
-
-        ManagementClass cls = new("Win32_OperatingSystem");
-        ManagementObjectCollection instances = cls.GetInstances();
-
-        double total_physical_memeory = 0;
-        double free_physical_memeory = 0;
-        double used_physical_memory = 0;
-
-
-        foreach (ManagementObject info in instances)
-        {
-            total_physical_memeory = Math.Round(double.Parse(info["TotalVisibleMemorySize"].ToString()) / 1024, 1);
-            free_physical_memeory = Math.Round(double.Parse(info["FreePhysicalMemory"].ToString()) / 1024, 1);
-            used_physical_memory = total_physical_memeory - free_physical_memeory;
-
-        }
-
-        string status_info = "{'cpu'" + ":" + "'" + Math.Round(cpuUsage, 1).ToString() + " %" + "'," +
-            "'ram_total'" + ":" + "'" + total_physical_memeory.ToString() + " MB" + "'," +
-            "'ram_usage'" + ":" + "'" + Math.Round(used_physical_memory, 1).ToString() + " MB" + "'," +
-            "'ram_usage_per'" + ":" + "'" + Math.Round(used_physical_memory * 100 / total_physical_memeory, 1).ToString() + " %" + "'}";
-        return status_info;
-    }
-    public static void Reset()
-    {
-        Process.Start("shutdown.exe", "-r");
-    }
-
-
-}
 
